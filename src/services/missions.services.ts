@@ -2,6 +2,7 @@ import type * as MissionTypes from "../types/missions.js";
 import * as MissionsRepository from "../repositories/missions.repositories.js";
 import { Missions as MissionModel, } from "../models/Index.ts";
 import { getGremioByID } from "../repositories/gremio.repositories.ts";
+import { Request } from 'express'
 
 
 
@@ -52,4 +53,12 @@ export async function deleteMissionService(id:number):Promise<"MISSION_NOT_FOUND
     if (hasAsigneds) return "MISSION_HAS_ASIGNEDS";
     await MissionsRepository.deleteMission(id);
     return "DELETED";
+}
+
+export async function listMissionsService(query: Request['query']): Promise<MissionTypes.Mission[]> {
+    const status = query.status === undefined ? undefined : query.status === 'true';
+    const level = query.level === undefined ? undefined : Number(query.level);
+
+    const { rows } = await MissionsRepository.getMissions({ status, level });
+    return rows;
 }
