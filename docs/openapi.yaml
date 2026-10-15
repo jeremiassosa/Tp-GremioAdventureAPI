@@ -1,4 +1,4 @@
-# Contrato de la Library API, en formato OpenAPI 3.0.
+# Contrato del Gremio De Aventureros API, en formato OpenAPI 3.0.
 # Se sirve en http://localhost:3000/docs con Swagger UI. Guardá el archivo y recargá la página.
 #
 # Regla de toda la clase: el contrato de un endpoint se escribe ACÁ antes de programarlo.
@@ -86,6 +86,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
   /missions/{id}:
     get:
       summary: Get a mission by id
@@ -218,6 +219,7 @@ components:
         error:
           type: string
           example: Mission not found
+
     Mission:
       type: object
       required: [id, title, objetive, level, gremio_id, status]
@@ -228,6 +230,7 @@ components:
         level: { type: integer, example: 5 }
         gremio_id: { type: integer, example: 1 }
         status: { type: boolean, example: true }
+
     NewMission:
       type: object
       required: [title, objetive, level, gremio_id]
@@ -236,6 +239,7 @@ components:
         objetive: { type: string, example: "Capturar al dragon" }
         level: { type: integer, example: 5 }
         gremio_id: { type: integer, example: 1 }
+
     UpdateMission:
       type: object
       properties:
@@ -243,12 +247,14 @@ components:
         objetive: { type: string, example: "Capturar al dragon" }
         level: { type: integer, example: 5 }
         gremio_id: { type: integer, example: 1 }
+
     MissionResponse:
       type: object
       required: [data]
       properties:
         data:
           $ref: "#/components/schemas/Mission"
+          
     MissionPage:
       type: object
       required: [data, total, page, limit]
@@ -323,6 +329,85 @@ components:
               schema:
                 $ref: "#/components/schemas/Error"
 
+/adventurer/{id}:
+    get:
+      summary: Get a adventurer by id
+      tags: [Adventurers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":    
+          description: Adventurer found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdventurerResponse"
+        "400":    
+          description: Id is not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Adventurer not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Create a adventurer
+      tags: [Adventurers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewAdventurer"
+      responses:
+        "201":
+          description: Adventurer created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdventurerResponse"
+        "404":
+          description: Adventurer not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    components:
+    schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: Adventurer not found
+
+    Adventurer:
+      type: object
+      required: [id, name, level, user_id,]
+      properties:
+        id: { type: integer, example: 1 }
+        name: { type: string, example: "Aventurero de Ejemplo" }
+        level: { type: integer, example: 5 }
+        user_id: { type: integer, example: 1 }
+
+    NewAdventurer:
+      type: object
+      required: [name, level, user_id]
+      properties:
+         name: { type: string, example: "Aventurero de Ejemplo" }
+         level: { type: integer, example: 5 }
+         user_id: { type: integer, example: 1 }
+         
 /user/{id}:
     get:
       summary: Get a user by id
@@ -384,6 +469,7 @@ components:
         error:
           type: string
           example: User not found
+
     User:
       type: object
       required: [id, email, role]
@@ -394,6 +480,7 @@ components:
         level: { type: integer, example: 5 }
         gremio_id: { type: integer, example: 1 }
         status: { type: boolean, example: true }
+
     NewUser:
       type: object
       required: [email, password, role]
@@ -466,6 +553,7 @@ components:
         error:
           type: string
           example: Gremio not found
+
     Gremio:
       type: object
       required: [id, name, description]
@@ -473,11 +561,82 @@ components:
         id: { type: integer, example: 1 }
         name: { type: string, example: "Gremio de Ejemplo" }
         description: { type: string, example: "Un gremio de ejemplo" }
+
     NewGremio:
       type: object
       required: [name, description]
       properties:
          name: { type: string, example: "Gremio de Ejemplo" }
          description: { type: string, example: "Un gremio de ejemplo" }
+
+/asigned:
+
+    get:
+      summary: Get all asigned missions
+      tags: [Asigned]
+      responses:
+        "200":
+          description: List of asigned missions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AsignedMissionsResponse"
+        "404":
+          description: No asigned missions found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Create an asigned mission
+      tags: [Asigned]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewAsignedMission"
+      responses:
+        "201":
+          description: Asigned mission created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AsignedMissionResponse"
+        "404":
+          description: Mission or adventurer not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    components:
+    schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: Gremio not found
+
+    AsignedMission:
+      type: object
+      required: [id, missions_id, adventurer_id,]
+      properties:
+        id: { type: integer, example: 1 }
+        mission_id: { type: integer, example: 1 }
+        adventurer_id: { type: integer, example: 1 }
+        description: { type: string, example: "Un gremio de ejemplo" }
+
+    NewAsignedMission:
+      type: object
+      required: [mission_id, adventurer_id, description]
+      properties:
+         mission_id: { type: integer, example: 1 }
+         adventurer_id: { type: integer, example: 1 }
+         description: { type: string, example: "Un gremio de ejemplo" }
+
 
 
