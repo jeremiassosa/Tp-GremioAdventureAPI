@@ -3,10 +3,10 @@ import { Sequelize } from "sequelize";
 // Conexión a PostgreSQL.
 // Antes de usarla, creá en pgAdmin una base vacía llamada `library`.
 // 👇 Cambiá estos datos por los de tu instalación de Postgres.
-const DATABASE = process.env.DB_NAME || '';
-const USER = process.env.DB_USER || '';
+const DATABASE = process.env.DB_NAME || 'GremioApi';
+const USER = process.env.DB_USER || 'jsosa';
 const PASSWORD = process.env.DB_PASSWORD || '';
-const HOST = process.env.DB_HOST || '';
+const HOST = process.env.DB_HOST || 'localhost';
 const PORT = Number(process.env.DB_PORT) || 5432;
 
 
