@@ -67,7 +67,6 @@ export async function missionHasAsigneds(missionId: number): Promise<boolean> {
     return count > 0;
 }
 
-
 export async function getMissions(filters: MissionFilters) {
     const where: Record<string, unknown> = {};
     if (filters.status !== undefined) where.status = filters.status;
