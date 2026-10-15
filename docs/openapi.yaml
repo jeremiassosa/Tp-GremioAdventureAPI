@@ -358,29 +358,6 @@ components:
               schema:
                 $ref: "#/components/schemas/Error"
 
-    post:
-      summary: Create a adventurer
-      tags: [Adventurers]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/NewAdventurer"
-      responses:
-        "201":
-          description: Adventurer created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AdventurerResponse"
-        "404":
-          description: Adventurer not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-
     components:
     schemas:
     Error:
@@ -399,14 +376,6 @@ components:
         name: { type: string, example: "Aventurero de Ejemplo" }
         level: { type: integer, example: 5 }
         user_id: { type: integer, example: 1 }
-
-    NewAdventurer:
-      type: object
-      required: [name, level, user_id]
-      properties:
-         name: { type: string, example: "Aventurero de Ejemplo" }
-         level: { type: integer, example: 5 }
-         user_id: { type: integer, example: 1 }
          
 /user/{id}:
     get:
@@ -477,10 +446,7 @@ components:
         id: { type: integer, example: 1 }
         email: { type: string, example: "user@example.com" }
         role: { type: string, example: "user" }
-        level: { type: integer, example: 5 }
-        gremio_id: { type: integer, example: 1 }
-        status: { type: boolean, example: true }
-
+      
     NewUser:
       type: object
       required: [email, password, role]
@@ -488,10 +454,7 @@ components:
          email: { type: string, example: "user@example.com" }
          password: { type: string, example: "password123" }
           role: { type: string, example: "user" }
-           level: { type: integer, example: 5 }
-            gremio_id: { type: integer, example: 1 }
-
-
+           
 /gremio/{id}:
     get:
       summary: Get a gremio by id
@@ -623,20 +586,18 @@ components:
 
     AsignedMission:
       type: object
-      required: [id, missions_id, adventurer_id,]
+      required: [id, missions_id, adventurer_id]
       properties:
         id: { type: integer, example: 1 }
         mission_id: { type: integer, example: 1 }
         adventurer_id: { type: integer, example: 1 }
-        description: { type: string, example: "Un gremio de ejemplo" }
 
     NewAsignedMission:
       type: object
-      required: [mission_id, adventurer_id, description]
+      required: [mission_id, adventurer_id]
       properties:
          mission_id: { type: integer, example: 1 }
          adventurer_id: { type: integer, example: 1 }
-         description: { type: string, example: "Un gremio de ejemplo" }
 
 
 
