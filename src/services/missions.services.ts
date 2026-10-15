@@ -5,6 +5,10 @@ import { getGremioByID } from "../repositories/gremio.repositories.ts";
 
 
 
+export async function getInAllService(): Promise<MissionTypes.Mission[]> {
+    return await MissionsRepository.getInAll();
+}
+
 export async function getMissionByIdService(id: number):Promise<MissionTypes.Mission|"MISSION_NOT_FOUND" > {
     const mission = await MissionsRepository.getMissionByID(id);
     if (!mission) return 'MISSION_NOT_FOUND'

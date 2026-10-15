@@ -23,7 +23,6 @@
     "seed": "tsx src/db/seed.ts",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts"
-    
   },
   "allowScripts": {
     "bcrypt@6.0.0": true

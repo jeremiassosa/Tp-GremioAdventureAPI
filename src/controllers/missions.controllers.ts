@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
-import {getMissionByIdService,createMissionService, replaceMissionService,deleteMissionService,
-} from '../services/missions.services.ts';
+import {getInAllService,getMissionByIdService,createMissionService, replaceMissionService,deleteMissionService} from '../services/missions.services.ts';
 
+
+export async function getInAll(req: Request, res: Response) {
+    const result = await getInAllService();
+    res.json({data:result});
+}
 
 export async function getById(req: Request, res: Response) {
     const result = await getMissionByIdService(Number(req.params.id));
