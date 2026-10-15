@@ -7,6 +7,11 @@ export async function getMissionByID(id: number): Promise<MissionTypes.Mission |
     return row ? row.toJSON() : null;
 }
 
+export async function getInAll(): Promise<MissionTypes.Mission[]> {
+    const rows = await MissionModel.findAll();
+    return rows.map((row) => row.toJSON());
+}
+
 
 export async function insertMission(missionData: MissionTypes.NewMission): Promise<MissionTypes.Mission[]> {
     const row = await MissionModel.create({
