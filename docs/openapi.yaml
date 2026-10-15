@@ -6,7 +6,7 @@
 openapi: 3.0.3
 
 info:
-  title: Library API
+  title: Gremio De Aventureros API
   version: 1.0.0
   description: |
     Missions, adventurers, user, asigned of a gremio.
