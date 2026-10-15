@@ -1,7 +1,5 @@
 # Contrato del Gremio De Aventureros API, en formato OpenAPI 3.0.
 # Se sirve en http://localhost:3000/docs con Swagger UI. Guardá el archivo y recargá la página.
-#
-# Regla de toda la clase: el contrato de un endpoint se escribe ACÁ antes de programarlo.
 
 openapi: 3.0.3
 
@@ -22,9 +20,6 @@ info:
 servers:
   - url: http://localhost:3000
 
-# ──────────────────────────────────────────────────────────────
-# Endpoints. Un bloque por ruta; dentro, un bloque por verbo.
-# ──────────────────────────────────────────────────────────────
 paths:
   /missions:
     get:
@@ -81,7 +76,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MissionResponse"
         "404":
-          description: Author not found
+          description: Mission not found
           content:
             application/json:
               schema:
@@ -182,7 +177,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: Delete a mission (only if it was never loaned)
+      summary: Delete a mission (only if it was never assigned)
       tags: [Missions]
       parameters:
         - name: id
@@ -205,11 +200,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "409":
-          description: Mission has loans
+          description: Mission has been assigned and cannot be deleted
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
 components:
   schemas:
     Error:
@@ -281,7 +277,7 @@ components:
           in: query
           required: false
           schema: { type: boolean }
-        - name: author_id
+        - name: user_id
           in: query
           required: false
           schema: { type: integer }
@@ -323,7 +319,7 @@ components:
               schema:
                 $ref: "#/components/schemas/MissionResponse"
         "404":
-          description: Author not found
+          description: Mission not found
           content:
             application/json:
               schema:
