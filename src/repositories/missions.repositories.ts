@@ -1,5 +1,6 @@
 import type * as MissionTypes from "../types/missions.js";
 import { Asigned, Missions as MissionModel, } from "../models/Index.ts";
+import { MissionFilters } from "../types/missions.js";
 
 export async function getMissionByID(id: number): Promise<MissionTypes.Mission | null> {
     const row = await MissionModel.findByPk(id);
@@ -59,4 +60,16 @@ export async function deleteMission(missionId:number):Promise<boolean> {
 export async function missionHasAsigneds(missionId: number): Promise<boolean> {
     const count = await Asigned.count({ where: { missions_id: missionId } });
     return count > 0;
+}
+
+
+export async function getMissions(filters: MissionFilters) {
+    const where: Record<string, unknown> = {};
+    if (filters.status !== undefined) where.status = filters.status;
+    if (filters.level !== undefined) where.level = filters.level;
+
+    return MissionModel.findAndCountAll({
+        where,
+        order: [['id', 'ASC']],
+    });
 }
