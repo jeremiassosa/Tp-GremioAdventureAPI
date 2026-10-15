@@ -1,0 +1,483 @@
+# Contrato de la Library API, en formato OpenAPI 3.0.
+# Se sirve en http://localhost:3000/docs con Swagger UI. Guardá el archivo y recargá la página.
+#
+# Regla de toda la clase: el contrato de un endpoint se escribe ACÁ antes de programarlo.
+
+openapi: 3.0.3
+
+info:
+  title: Library API
+  version: 1.0.0
+  description: |
+    Missions, adventurers, user, asigned of a gremio.
+
+    **Conventions**
+    - All requests and responses are JSON.
+    - Dates use the `YYYY-MM-DD` format.
+    - Successful responses with a body have the shape `{ "data": ... }`: an object for one item, an array for a list.
+    - Paginated lists add the pagination fields next to `data`: `{ "data": [...], "total": 6, "page": 1, "limit": 10 }`.
+    - `204` responses have no body.
+    - All errors have the shape `{ "error": "..." }` (see the `Error` schema).
+
+servers:
+  - url: http://localhost:3000
+
+# ──────────────────────────────────────────────────────────────
+# Endpoints. Un bloque por ruta; dentro, un bloque por verbo.
+# ──────────────────────────────────────────────────────────────
+paths:
+  /missions:
+    get:
+      summary: Search missions with filters and pagination
+      tags: [Missions]
+      parameters:
+        - name: title
+          in: query
+          required: false
+          schema: { type: string }
+        - name: available
+          in: query
+          required: false
+          schema: { type: boolean }
+        - name: author_id
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 10 }
+      responses:
+        "200":
+          description: Page of missions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissionPage"
+        "400":
+          description: Invalid query param
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a mission
+      tags: [Missions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewMission"
+      responses:
+        "201":
+          description: Mission created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissionResponse"
+        "404":
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /missions/{id}:
+    get:
+      summary: Get a mission by id
+      tags: [Missions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Mission found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissionResponse"
+        "400":
+          description: Id is not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Mission not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      summary: Update some fields of a mission
+      tags: [Missions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMission"
+      responses:
+        "200":
+          description: Mission updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissionResponse"
+        "400":
+          description: Id is not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Mission or author not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Replace all fields of a mission
+      tags: [Missions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewMission"
+      responses:
+        "200":
+          description: Mission replaced
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissionResponse"
+        "400":
+          description: Id is not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Mission or author not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a mission (only if it was never loaned)
+      tags: [Missions]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Mission deleted
+        "400":
+          description: Id is not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Mission not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Mission has loans
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: Mission not found
+    Mission:
+      type: object
+      required: [id, title, objetive, level, gremio_id, status]
+      properties:
+        id: { type: integer, example: 1 }
+        title: { type: string, example: "Salvar al reino" }
+        objetive: { type: string, example: "Capturar al dragon" }
+        level: { type: integer, example: 5 }
+        gremio_id: { type: integer, example: 1 }
+        status: { type: boolean, example: true }
+    NewMission:
+      type: object
+      required: [title, objetive, level, gremio_id]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200, example: "Salvar al reino" }
+        objetive: { type: string, example: "Capturar al dragon" }
+        level: { type: integer, example: 5 }
+        gremio_id: { type: integer, example: 1 }
+    UpdateMission:
+      type: object
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200, example: "Salvar al reino" }
+        objetive: { type: string, example: "Capturar al dragon" }
+        level: { type: integer, example: 5 }
+        gremio_id: { type: integer, example: 1 }
+    MissionResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Mission"
+    MissionPage:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Mission"
+        total: { type: integer, example: 6 }
+        page: { type: integer, example: 1 }
+        limit: { type: integer, example: 10 }
+
+
+/missions:
+    get:
+      summary: Search missions with filters and pagination
+      tags: [Missions]
+      parameters:
+        - name: title
+          in: query
+          required: false
+          schema: { type: string }
+        - name: available
+          in: query
+          required: false
+          schema: { type: boolean }
+        - name: author_id
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: page
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, default: 10 }
+      responses:
+        "200":
+          description: Page of missions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissionPage"
+        "400":
+          description: Invalid query param
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a mission
+      tags: [Missions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewMission"
+      responses:
+        "201":
+          description: Mission created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MissionResponse"
+        "404":
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+/user/{id}:
+    get:
+      summary: Get a user by id
+      tags: [Users]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Id is not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Create a user
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    
+components:
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: User not found
+    User:
+      type: object
+      required: [id, email, role]
+      properties:
+        id: { type: integer, example: 1 }
+        email: { type: string, example: "user@example.com" }
+        role: { type: string, example: "user" }
+        level: { type: integer, example: 5 }
+        gremio_id: { type: integer, example: 1 }
+        status: { type: boolean, example: true }
+    NewUser:
+      type: object
+      required: [email, password, role]
+      properties:
+         email: { type: string, example: "user@example.com" }
+         password: { type: string, example: "password123" }
+          role: { type: string, example: "user" }
+           level: { type: integer, example: 5 }
+            gremio_id: { type: integer, example: 1 }
+
+
+/gremio/{id}:
+    get:
+      summary: Get a gremio by id
+      tags: [Gremios]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":    
+          description: Gremio found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GremioResponse"
+        "400":    
+          description: Id is not a number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Gremio not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Create a gremio
+      tags: [Gremios]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewGremio"
+      responses:
+        "201":
+          description: Gremio created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GremioResponse"
+        "404":
+          description: Gremio not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    components:
+    schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: Gremio not found
+    Gremio:
+      type: object
+      required: [id, name, description]
+      properties:
+        id: { type: integer, example: 1 }
+        name: { type: string, example: "Gremio de Ejemplo" }
+        description: { type: string, example: "Un gremio de ejemplo" }
+    NewGremio:
+      type: object
+      required: [name, description]
+      properties:
+         name: { type: string, example: "Gremio de Ejemplo" }
+         description: { type: string, example: "Un gremio de ejemplo" }
+
+
