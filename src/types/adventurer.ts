@@ -11,9 +11,3 @@ export interface NewAdventurer {
     user_id: number;
 }
 
-export type UpdateAdventurer = Partial<Omit<NewAdventurer, "user_id">>;
-
-export interface AdventurerFilters {
-    name?: string;
-    level?: number;
-}

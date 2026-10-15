@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import missionsRouter from './routes/missions.routes.ts';
 import { sequelize } from "./db/connection.ts";
+import asignedRoutes from "./routes/asigned.routes.ts";
 
 
 
@@ -13,6 +14,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/missions", missionsRouter);
+
+app.use('/asigned', asignedRoutes);
 
 
 async function start() {
