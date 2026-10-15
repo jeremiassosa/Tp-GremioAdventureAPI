@@ -34,7 +34,7 @@ paths:
           in: query
           required: false
           schema: { type: boolean }
-        - name: author_id
+        - name: user_id
           in: query
           required: false
           schema: { type: integer }
