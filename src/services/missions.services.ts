@@ -1,5 +1,6 @@
 import type * as MissionTypes from "../types/missions.js";
 import * as MissionsRepository from "../repositories/missions.repositories.js";
+import { Missions as MissionModel, } from "../models/Index.ts";
 import { getGremioByID } from "../repositories/gremio.repositories.ts";
 import { Request } from 'express'
 import * as GremioRepository from "../repositories/gremio.repositories.ts"
@@ -25,7 +26,7 @@ export async function createMissionService(missionData: MissionTypes.NewMission)
 }
 
 
-export async function replaceMissionService(missionData: MissionTypes.NewMission, id: number): Promise<"GREMIO_NOT_FOUND" | "MISSION_NOT_FOUND" | MissionTypes.Mission> {
+export async function replaceMissionService(missionData: MissionTypes.NewMission, id: number): Promise< | "GREMIO_NOT_FOUND" | "MISSION_NOT_FOUND" | MissionTypes.NewMission> {
     const gremio = await getGremioByID(missionData.gremio_id);
     if (!gremio) return 'GREMIO_NOT_FOUND'
     const mission = await MissionsRepository.getMissionByID(id);
@@ -62,7 +63,8 @@ export async function deleteMissionService(id:number):Promise<"MISSION_NOT_FOUND
 export async function listMissionsService(query: Request['query']): Promise<MissionTypes.Mission[]> {
     const status = query.status === undefined ? undefined : query.status === 'true';
     const level = query.level === undefined ? undefined : Number(query.level);
+    const gremio_id = query.gremio_id === undefined ? undefined : Number(query.gremio_id);
 
-    const { rows } = await MissionsRepository.getMissions({ status, level });
+    const { rows } = await MissionsRepository.getMissions({ status, level, gremio_id });
     return rows;
 }

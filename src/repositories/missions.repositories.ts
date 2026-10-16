@@ -71,6 +71,7 @@ export async function getMissions(filters: MissionFilters) {
     const where: Record<string, unknown> = {};
     if (filters.status !== undefined) where.status = filters.status;
     if (filters.level !== undefined) where.level = filters.level;
+    if (filters.gremio_id !== undefined) where.gremio_id = filters.gremio_id;
 
     return MissionModel.findAndCountAll({
         where,

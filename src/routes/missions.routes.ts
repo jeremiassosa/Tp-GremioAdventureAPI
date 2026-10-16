@@ -9,7 +9,7 @@ const router = Router();
 router.get('/', authenticateToken, getInAll);
 router.get('/:id', authenticateToken, getById);
 router.post('/', authenticateToken, authorizeRole('admin'), validate(createMissionSchema), create);
-router.put('/:id',  authenticateToken, validate(createMissionSchema), replace);
+router.put('/:id',  authenticateToken, authorizeRole('admin'), validate(createMissionSchema), replace);
 router.patch('/:id',  authenticateToken, update);
 router.delete('/:id', authenticateToken, authorizeRole('admin'), remove);
 
