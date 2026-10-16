@@ -29,7 +29,7 @@ app.use("/docs", docsRouter);
 app.use("/missions", missionsRouter);
 app.use('/asigned', asignedRoutes);
 app.use('/auth', authRoutes);
-app.use('/adventurers', adventurerRoutes);
+app.use('/adventurer', adventurerRoutes);
 
 
 
