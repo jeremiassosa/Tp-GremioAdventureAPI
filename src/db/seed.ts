@@ -15,7 +15,7 @@ async function seed() {
     await sequelize.sync({ force: true });
 
     const adminPasswordHash = await bcrypt.hash("admin123", 10);
-    const userPasswordHash = await bcrypt.hash("user123", 10);
+    const userPasswordHash = await bcrypt.hash("user12345", 10);
 
   // 1. USUARIOS
   const [admin, user1, user2, user3] = await User.bulkCreate([
