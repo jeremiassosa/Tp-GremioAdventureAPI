@@ -8,25 +8,27 @@ import asignedRoutes from "./routes/asigned.routes.ts";
 import authRoutes from "./routes/users.routes.ts";
 import docsRouter from "./utils/doc.ts";
 
-
 require('dotenv').config(); 
-
-
 
 
 const app = express();
 const PORT = 3000;
 app.use(express.json()); // permite leer JSON del body en POST / PUT / PATCH
 
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    next();
+});
+
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Library API running", docs: `http://localhost:${PORT}/docs` });
 });
+
 app.use("/docs", docsRouter);
-
 app.use("/missions", missionsRouter);
-
 app.use('/asigned', asignedRoutes);
 app.use('/auth', authRoutes);
+
 
 
 

@@ -23,7 +23,7 @@
     "typescript": "^7.0.2"
   },
   "scripts": {
-    "seed": "tsx src/db/seed.ts",
+    "seed": "tsx -r dotenv/config src/db/seed.ts dotenv_config_path=./src/.env",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts"
   },
