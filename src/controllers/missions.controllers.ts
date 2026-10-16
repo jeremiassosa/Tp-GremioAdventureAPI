@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import {getInAllService,getMissionByIdService,createMissionService, replaceMissionService,deleteMissionService, updateMissionService} from '../services/missions.services.ts';
+import {getInAllService,getMissionByIdService,createMissionService, replaceMissionService,deleteMissionService, updateMissionService, listMissionsService} from '../services/missions.services.ts';
 
 
 export async function getInAll(req: Request, res: Response) {
-    const result = await getInAllService();
+    const result = await listMissionsService(req.query);
     res.json({data:result});
 }
 
