@@ -6,3 +6,8 @@ export async function getAdventurerByID(id: number): Promise<AdventurerTypes.Adv
     const row = await AdventurerModel.findByPk(id);
     return row ? row.toJSON() : null;
 }
+
+export async function getInAll(): Promise<AdventurerTypes.Adventurer[]> {
+    const rows = await AdventurerModel.findAll();
+    return rows.map((row) => row.toJSON());
+}

@@ -7,6 +7,7 @@ import { sequelize } from "./db/connection.ts";
 import asignedRoutes from "./routes/asigned.routes.ts";
 import authRoutes from "./routes/users.routes.ts";
 import docsRouter from "./utils/doc.ts";
+import adventurerRoutes from "./routes/adventurer.routes.ts";
 
 require('dotenv').config(); 
 
@@ -28,7 +29,7 @@ app.use("/docs", docsRouter);
 app.use("/missions", missionsRouter);
 app.use('/asigned', asignedRoutes);
 app.use('/auth', authRoutes);
-
+app.use('/adventurers', adventurerRoutes);
 
 
 
