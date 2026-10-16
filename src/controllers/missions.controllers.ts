@@ -16,6 +16,7 @@ export async function getById(req: Request, res: Response) {
 
 export async function create(req: Request, res: Response) {
     const result = await createMissionService(req.body);
+    if (result === "GREMIO_NOT_FOUND") return res.status(404).json({ error: "Gremio not found" });
     res.status(201).json({data:result});
 }
 

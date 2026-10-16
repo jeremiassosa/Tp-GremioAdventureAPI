@@ -3,6 +3,7 @@ import * as MissionsRepository from "../repositories/missions.repositories.js";
 import { Missions as MissionModel, } from "../models/Index.ts";
 import { getGremioByID } from "../repositories/gremio.repositories.ts";
 import { Request } from 'express'
+import * as GremioRepository from "../repositories/gremio.repositories.ts"
 
 
 
@@ -17,7 +18,7 @@ export async function getMissionByIdService(id: number):Promise<MissionTypes.Mis
 }
 
 export async function createMissionService(missionData: MissionTypes.NewMission): Promise<MissionTypes.Mission | "GREMIO_NOT_FOUND"> {
-    const gremio = await MissionsRepository.getMissionByID(missionData.gremio_id);
+    const gremio = await GremioRepository.getGremioByID(missionData.gremio_id);
     if (!gremio) return "GREMIO_NOT_FOUND"
 
     const newMission =await MissionsRepository.insertMission(missionData);
